@@ -116,8 +116,6 @@ VigilSpyHelper.CreateServiceProxy = function(OriginalObject)
 	return Proxy
 end
 
-local GetGenv = getgenv or getfenv(0)
-local CloneRef = cloneref or function(Object) return VigilSpyHelper.CreateUserSectionInstance(Object) end
 local GetInstances = getinstances or function() return game:GetDescendants() end
 local GetNilInstances = getnilinstances or function() return {} end
 
