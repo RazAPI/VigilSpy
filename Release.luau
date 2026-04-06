@@ -242,57 +242,111 @@ end
 
 --// main instance logger
 task.spawn(function()
-	local Scripts = {
-		ServerScripts = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Script" }),
-		LocalScripts = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "LocalScript" }),
-		ModuleScripts = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ModuleScript" })
-	}
+	if RazAPI.Environment.VigilConfiguration.TrackInstanceMethods == true
+		local Scripts = {
+			ServerScripts = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Script" }),
+			LocalScripts = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "LocalScript" }),
+			ModuleScripts = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "ModuleScript" })
+		}
 
-	local UserInterfaces = {
-		ScreenGui = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ScreenGui" }),
-		SurfaceGui = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "SurfaceGui" }),
-		BillBoardGui = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BillboardGui" }),
-		AdGui = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "AdGui" }),
-		Frame = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Frame" }),
-		ScrollingFrame = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ScrollingFrame" }),
-		TextLabel = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "TextLabel" }),
-		TextButton = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "TextButton" }),
-		TextBox = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "TextBox" }),
-		ImageLabel = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ImageLabel" }),
-		ImageButton = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ImageButton" }),
-		VideoFrame = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "VideoFrame" }),
-		ViewportFrame = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ViewportFrame" }),
-		CanvasGroup = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "CanvasGroup" })
-	}
+		local UserInterfaces = {
+			ScreenGui = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "ScreenGui" }),
+			SurfaceGui = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "SurfaceGui" }),
+			BillBoardGui = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BillboardGui" }),
+			AdGui = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "AdGui" }),
+			Frame = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Frame" }),
+			ScrollingFrame = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "ScrollingFrame" }),
+			TextLabel = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "TextLabel" }),
+			TextButton = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "TextButton" }),
+			TextBox = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "TextBox" }),
+			ImageLabel = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "ImageLabel" }),
+			ImageButton = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "ImageButton" }),
+			VideoFrame = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "VideoFrame" }),
+			ViewportFrame = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "ViewportFrame" }),
+			CanvasGroup = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "CanvasGroup" })
+		}
 
-	local RemoteObjects = {
-		RemoteEvent = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "RemoteEvent" }),
-		RemoteFunction = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "RemoteFunction" }),
-		BindableEvent = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BindableEvent" }),
-		BindableFunction = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BindableFunction" })
-	}
+		local RemoteObjects = {
+			RemoteEvent = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "RemoteEvent" }),
+			RemoteFunction = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "RemoteFunction" }),
+			BindableEvent = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BindableEvent" }),
+			BindableFunction = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BindableFunction" })
+		}
 
-	local FolderBasedObjects = {
-		Folder = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Folder" }),
-		Model = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Model" }),
-		Configuration = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Configuration" }),
-		SelectionBox = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "SelectionBox" }),
-		SelectionSphere = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "SelectionSphere" })
-	}
+		local FolderBasedObjects = {
+			Folder = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Folder" }),
+			Model = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Model" }),
+			Configuration = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Configuration" }),
+			SelectionBox = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "SelectionBox" }),
+			SelectionSphere = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "SelectionSphere" })
+		}
 
-	local Values = {
-		BinaryStringValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BinaryStringValue" }),
-		BrickColorValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BrickColorValue" }),
-		BoolValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BoolValue" }),
-		CFrameValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "CFrameValue" }),
-		Color3Value = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Color3Value" }),
-		DoubleConstrainedValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "DoubleConstrainedValue" }),
-		IntConstrainedValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "IntConstrainedValue" }),
-		IntValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "IntValue" }),
-		NumberValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "NumberValue" }),
-		ObjectValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ObjectValue" }),
-		Vector3Value = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Vector3Value" })
-	}
+		local Values = {
+			BinaryStringValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BinaryStringValue" }),
+			BrickColorValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BrickColorValue" }),
+			BoolValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BoolValue" }),
+			CFrameValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "CFrameValue" }),
+			Color3Value = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Color3Value" }),
+			DoubleConstrainedValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "DoubleConstrainedValue" }),
+			IntConstrainedValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "IntConstrainedValue" }),
+			IntValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "IntValue" }),
+			NumberValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "NumberValue" }),
+			ObjectValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "ObjectValue" }),
+			Vector3Value = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Vector3Value" })
+		}
+	else
+		local Scripts = {
+			ServerScripts = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Script" }),
+			LocalScripts = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "LocalScript" }),
+			ModuleScripts = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ModuleScript" })
+		}
+
+		local UserInterfaces = {
+			ScreenGui = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ScreenGui" }),
+			SurfaceGui = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "SurfaceGui" }),
+			BillBoardGui = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BillboardGui" }),
+			AdGui = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "AdGui" }),
+			Frame = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Frame" }),
+			ScrollingFrame = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ScrollingFrame" }),
+			TextLabel = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "TextLabel" }),
+			TextButton = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "TextButton" }),
+			TextBox = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "TextBox" }),
+			ImageLabel = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ImageLabel" }),
+			ImageButton = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ImageButton" }),
+			VideoFrame = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "VideoFrame" }),
+			ViewportFrame = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ViewportFrame" }),
+			CanvasGroup = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "CanvasGroup" })
+		}
+
+		local RemoteObjects = {
+			RemoteEvent = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "RemoteEvent" }),
+			RemoteFunction = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "RemoteFunction" }),
+			BindableEvent = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BindableEvent" }),
+			BindableFunction = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BindableFunction" })
+		}
+
+		local FolderBasedObjects = {
+			Folder = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Folder" }),
+			Model = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Model" }),
+			Configuration = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Configuration" }),
+			SelectionBox = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "SelectionBox" }),
+			SelectionSphere = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "SelectionSphere" })
+		}
+
+		local Values = {
+			BinaryStringValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BinaryStringValue" }),
+			BrickColorValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BrickColorValue" }),
+			BoolValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BoolValue" }),
+			CFrameValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "CFrameValue" }),
+			Color3Value = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Color3Value" }),
+			DoubleConstrainedValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "DoubleConstrainedValue" }),
+			IntConstrainedValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "IntConstrainedValue" }),
+			IntValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "IntValue" }),
+			NumberValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "NumberValue" }),
+			ObjectValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ObjectValue" }),
+			Vector3Value = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Vector3Value" })
+		}
+	end
 
 	local Services = {
 		AvatarEditorService = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "AvatarEditorService" }),
