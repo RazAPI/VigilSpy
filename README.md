@@ -1,7 +1,7 @@
 # VigilSpy
 
 VigilSpy is a proxy-based DataModel activity-tracker utility.
-**Version**: 1.0.1, Build 4520261035, Last updated 4/25/2026
+**Version** 1.1.0, Build 4122026148 Last updated 4/25/2026
 
 > ⚠️ This version is not safe to test on anticheats.
 
