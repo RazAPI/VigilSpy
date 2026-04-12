@@ -205,7 +205,7 @@ end)
 
 --// property watcher
 VigilSpyHelper.Iteration.WatchInstanceProperties = function(Object, Properties, Category)
-	RazAPI.TypeCheck(Object, "Instance", "WIPService", 1)
+	RazAPI.TypeCheck(Object, "WatchInstanceProperties", "Instance", 1)
 
 	local InstanceEntry = { Instance = Object, Category = Category, Changes = {} }
 	table.insert(VigilSpyHelper.ObjectPropertyChangeLogs, InstanceEntry)
@@ -242,14 +242,16 @@ end
 
 --// main instance logger
 task.spawn(function()
-	if RazAPI.Environment.VigilConfiguration.TrackInstanceMethods == true
-		local Scripts = {
+	local Scripts, UserInterfaces, RemoteObjects, FolderBasedObjects, Values
+
+	if RazAPI.Environment.VigilConfiguration.TrackInstanceMethods == true then
+		Scripts = {
 			ServerScripts = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Script" }),
 			LocalScripts = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "LocalScript" }),
 			ModuleScripts = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "ModuleScript" })
 		}
 
-		local UserInterfaces = {
+		UserInterfaces = {
 			ScreenGui = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "ScreenGui" }),
 			SurfaceGui = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "SurfaceGui" }),
 			BillBoardGui = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BillboardGui" }),
@@ -266,14 +268,14 @@ task.spawn(function()
 			CanvasGroup = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "CanvasGroup" })
 		}
 
-		local RemoteObjects = {
+		RemoteObjects = {
 			RemoteEvent = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "RemoteEvent" }),
 			RemoteFunction = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "RemoteFunction" }),
 			BindableEvent = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BindableEvent" }),
 			BindableFunction = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BindableFunction" })
 		}
 
-		local FolderBasedObjects = {
+		FolderBasedObjects = {
 			Folder = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Folder" }),
 			Model = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Model" }),
 			Configuration = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Configuration" }),
@@ -281,7 +283,7 @@ task.spawn(function()
 			SelectionSphere = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "SelectionSphere" })
 		}
 
-		local Values = {
+		Values = {
 			BinaryStringValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BinaryStringValue" }),
 			BrickColorValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BrickColorValue" }),
 			BoolValue = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "BoolValue" }),
@@ -295,13 +297,13 @@ task.spawn(function()
 			Vector3Value = VigilSpyHelper.ObjectHelper.FilterProxied({ ClassName = "Vector3Value" })
 		}
 	else
-		local Scripts = {
+		Scripts = {
 			ServerScripts = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Script" }),
 			LocalScripts = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "LocalScript" }),
 			ModuleScripts = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ModuleScript" })
 		}
 
-		local UserInterfaces = {
+		UserInterfaces = {
 			ScreenGui = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "ScreenGui" }),
 			SurfaceGui = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "SurfaceGui" }),
 			BillBoardGui = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BillboardGui" }),
@@ -318,14 +320,14 @@ task.spawn(function()
 			CanvasGroup = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "CanvasGroup" })
 		}
 
-		local RemoteObjects = {
+		RemoteObjects = {
 			RemoteEvent = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "RemoteEvent" }),
 			RemoteFunction = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "RemoteFunction" }),
 			BindableEvent = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BindableEvent" }),
 			BindableFunction = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BindableFunction" })
 		}
 
-		local FolderBasedObjects = {
+		FolderBasedObjects = {
 			Folder = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Folder" }),
 			Model = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Model" }),
 			Configuration = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "Configuration" }),
@@ -333,7 +335,7 @@ task.spawn(function()
 			SelectionSphere = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "SelectionSphere" })
 		}
 
-		local Values = {
+		Values = {
 			BinaryStringValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BinaryStringValue" }),
 			BrickColorValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BrickColorValue" }),
 			BoolValue = VigilSpyHelper.ObjectHelper.Filter({ ClassName = "BoolValue" }),
