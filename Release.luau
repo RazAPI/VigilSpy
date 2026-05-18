@@ -16,10 +16,7 @@ end
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 --// Globals
-local RazAPI = {
-	OldClosures = { type = type, typeof = typeof }, Environment = getgenv and getgenv() or getfenv(0), WhitelistedObjects = {},
-	TypeCheck = function(Object, FunctionName, Type, Argument) assert(typeof(Object) == Type, `invalid argument #1 to {FunctionName}, expected {Type}, got {typeof(Object)}`) end, Connections = {}
-}
+local RazAPI = { OldClosures = { type = type, typeof = typeof }, Environment = getgenv and getgenv() or getfenv(0), WhitelistedObjects = {}, TypeCheck = function(Object, FunctionName, Type, Argument) assert(typeof(Object) == Type, `invalid argument #1 to {FunctionName}, expected {Type}, got {typeof(Object)}`) end, Connections = {} }
 
 RazAPI.WhitelistProxy = function(Object, WhitelistedTypeName)
 	RazAPI.WhitelistedObjects[Object] = WhitelistedTypeName
@@ -29,13 +26,14 @@ RazAPI.SignConnection = function(Connection, Callback)
 	return Connection:Connect(Callback)
 end
 
-Environment.type = function(Object)
-	return RazAPI.WhitelistedObjects[Object] or RazAPI.OldClosures.type(Object)
+if newcclosure then 
+	Environment.type = newcclosure(function(Object) return RazAPI.WhitelistedObjects[Object] or RazAPI.OldClosures.type(Object) end)
+	Environment.typeof = newcclosure(function(Object) return RazAPI.WhitelistedObjects[Object] or RazAPI.OldClosures.typeof(Object) end)
+else
+	Environment.type = function(Object) return RazAPI.WhitelistedObjects[Object] or RazAPI.OldClosures.type(Object) end
+	Environment.typeof = function(Object) return RazAPI.WhitelistedObjects[Object] or RazAPI.OldClosures.typeof(Object) end
 end
 
-Environment.typeof = function(Object)
-	return RazAPI.WhitelistedObjects[Object] or RazAPI.OldClosures.typeof(Object)
-end
 --// GLH
 local VigilSpyHelper = {
 	PlayerLogs = { Joins = {}, Removed = {} },
@@ -49,7 +47,20 @@ local VigilSpyHelper = {
 		Services = {}
 	},
 	ObjectPropertyChangeLogs = {},
-	Iteration = {}
+	Iteration = {},
+}
+
+local VigilEnv = {
+	Try = function(Call, Reason)
+		local Success, Result = pcall(Call)
+
+		if not Success then 
+			PrintConsole(2, `[ VigilSpy - Assistant ]: {Reason}`)
+			return Success
+		end
+
+		return Success
+	end
 }
 
 --// sorry studio users
@@ -60,10 +71,7 @@ end
 
 if RazAPI.Environment.VigilConfiguration == nil then
 	PrintConsole(2, "[ VigilSpy - Assistant ]: Could not find configuration, resetting factory settings (Error code 0x9C)")
-
-	RazAPI.Environment.VigilConfiguration = {
-		["TrackInstanceMethods"] = false
-	}	
+	RazAPI.Environment.VigilConfiguration = { ["TrackInstanceMethods"] = false }	
 end
 
 --// this will help track method calls
@@ -100,7 +108,7 @@ VigilSpyHelper.CreateServiceProxy = function(OriginalObject)
 					Timestamp = os.clock()
 				})
 
-				PrintConsole(1, `[ VigilSpy - Method Called ]: {OriginalObject.ClassName}.{Idx}, Logs are sent to VigilSpyHelper.OPCL`)
+				PrintConsole(1, `[ VigilSpy - Method Called ]: {OriginalObject.ClassName}.{Idx}, Logs are sent to VigilSpyHelper.ObjectPropertyChangeLogs`)
 				return Value(OriginalObject, ...)
 			end
 		end
@@ -116,17 +124,29 @@ VigilSpyHelper.CreateServiceProxy = function(OriginalObject)
 	return Proxy
 end
 
-local GetInstances = getinstances or function() return game:GetDescendants() end
-local GetNilInstances = getnilinstances or function() return {} end
+VigilSpyHelper.FindDescendants = function(Table, Callback)
+	local Dummy = {}
 
-local GetAllInstances = function()
+	for i,v in Table do
+		if Callback(v) then
+			table.insert(Dummy, v)
+		end
+	end
+
+	return Dummy
+end
+
+local getinstances = getinstances or function() return game:GetDescendants() end
+local getnilinstances = getnilinstances or function() return {} end
+
+local getallinstances = function()
 	local Objects = {}
 
-	for _, Value in GetInstances() do
+	for _, Value in getinstances() do
 		table.insert(Objects, Value)
 	end
 
-	for _, Value in GetNilInstances() do
+	for _, Value in getnilinstances() do
 		if not table.find(Objects, Value) then
 			table.insert(Objects, Value)
 		end
@@ -135,28 +155,16 @@ local GetAllInstances = function()
 	return Objects
 end
 
-local GetScripts = getscripts or function()
-	local Scripts = {}
-
-	for _, Value in GetInstances() do
-		if Value:IsA("LuaSourceContainer") then
-			table.insert(Scripts, Value)
-		end
-	end
-
-	return Scripts
-end
-
-local GetProperties = getproperties or function() end
-local GetHiddenProperty = gethiddenproperty or function(Object, Property) return pcall(Object, Property) end
-local GetIdentity = getidentity or getthreadidentity or getthreadcontext or function()
+local getproperties = getproperties or function() end
+local gethiddenproperty = gethiddenproperty or function(Object, Property) return pcall(Object, Property) end
+local getidentity = getidentity or getthreadidentity or getthreadcontext or function()
 	if RunService:IsStudio() then return "Studio" end
 end
 
 VigilSpyHelper.ObjectHelper.Filter = function(Properties)
 	local Objects = {}
 
-	for _, Value in GetAllInstances() do
+	for _, Value in getallinstances() do
 		if Properties.ClassName == Value.ClassName then
 			table.insert(Objects, Value)
 		end
@@ -168,7 +176,7 @@ end
 VigilSpyHelper.ObjectHelper.FilterProxied = function(Properties)
 	local Objects = {}
 
-	for _, Value in GetAllInstances() do
+	for _, Value in getallinstances() do
 		if Properties.ClassName == Value.ClassName then
 			table.insert(Objects, VigilSpyHelper.CreateServiceProxy(Value))
 		end
@@ -429,15 +437,17 @@ task.spawn(function()
 	}
 
 	pcall(function()
-		local Success = pcall(function() Instance.new("Script").RunContext = Enum.RunContext.Legacy end)
-		if not Success then
-			PrintConsole(2, "[ VigilSpy - Assistant ]: Failed to verify capabilities (Error code 0x8C)")
-			return
-		end
+		local Tests = {
+			[1] = VigilEnv.Try(function()
+				Instance.new("Script").RunContext = Enum.RunContext.Legacy
+			end, "Failed to verify capabilities (Error Code 0x8C)"),
 
-		local SupportSource = pcall(function() return Instance.new("LocalScript").Source end)
-		if not SupportSource then
-			PrintConsole(2, "[ VigilSpy - Assistant ]: Failed to verify capabilities (Error code 0x8C)")
+			[2] = VigilEnv.Try(function()
+				return Instance.new("LocalScript").Source
+			end, "Failed to verify capabilities (Error Code 0x8C)")
+		}
+
+		if Tests[1] == false or Tests[2] == false then
 			return
 		end
 
